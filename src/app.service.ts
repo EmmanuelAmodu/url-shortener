@@ -6,6 +6,10 @@ const urlRepository = {
 
 }
 
+const requestLogRepository = {
+
+}
+
 @Injectable()
 export class AppService {
   encode(url: string) {
@@ -14,7 +18,11 @@ export class AppService {
     return urlRepository[code.substring(0, 6)];
   }
 
-  getUrl(id: string) {
+  decode(id: string) {
     return urlRepository[id];
+  }
+
+  saveLog() {
+
   }
 }

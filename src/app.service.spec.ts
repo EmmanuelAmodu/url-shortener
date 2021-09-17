@@ -27,6 +27,6 @@ describe('UsersService', () => {
   });
 
   it('should return an encoded object of the url', () => {
-    expect(service.getUrl(urlData.code.substring(0, 6))).toMatchObject(urlData);
+    expect(service.decode(urlData.code.substring(0, 6))).toMatchObject(urlData);
   });
 });
