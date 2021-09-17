@@ -3,6 +3,10 @@ import { AppService } from './app.service';
 
 describe('UsersService', () => {
   let service: AppService;
+  let urlData = { 
+    url: 'example.domain.com',
+    code: '13e1873acdf0fc47ac2fee5c398821844eb604478dd34a697e3b4731eaf3ab62'
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,7 +22,11 @@ describe('UsersService', () => {
     expect(service).toBeDefined();
   });
 
+  it('should save and return an encoded object of the url', () => {
+    expect(service.encode(urlData.url)).toMatchObject(urlData);
+  });
+
   it('should return an encoded object of the url', () => {
-    expect(service.encode('url')).toBe('2d11045354322be3436659ed58835c0c5751aa15aafc54d2dfefea699096b8ab');
+    expect(service.getUrl(urlData.code.substring(0, 6))).toMatchObject(urlData);
   });
 });
