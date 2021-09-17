@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Redirect } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Redirect } from '@nestjs/common';
 import { URLDto } from './app.dto';
 import { AppService } from './app.service';
 import { ErrorResponse } from './utils/error.response';
@@ -12,14 +12,21 @@ export class AppController {
     private readonly errorResponse: ErrorResponse,
   ) {}
 
-  @Post('api/encode')
-  async encode(@Body() data: URLDto) {
-    return this.appService.encode(data.url);
+  // Bahaves more like a put then a post
+  @Put('api/encode')
+  encode(@Body() data: URLDto) {
+    const result = this.appService.encode(data.url);
+    return result ? 
+      this.successResponse.createdResponse(result, 'Url encoded successfully') :
+        this.errorResponse.serverErrorResponse('Error occured while encoding url', 'ENCODING_ERROR');
   }
 
   @Get('api/:code')
-  async decode(@Param('code') code: string) {
-    return this.appService.decode(code);
+  decode(@Param('code') code: string) {
+    const result = this.appService.decode(code);
+    return result ? 
+      this.successResponse.okResponse('Url retrieved successfully', result) :
+        this.errorResponse.notFoundResponse('Data not found for this encoding', 'NOT_FOUND');
   }
 
   @Get('404')

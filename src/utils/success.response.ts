@@ -9,7 +9,7 @@ export class SuccessResponse {
       status: true,
       statusCode: HttpStatus.CREATED,
       message,
-      data,
+      data: data || null,
     };
   }
 
@@ -21,7 +21,7 @@ export class SuccessResponse {
       status: true,
       statusCode: HttpStatus.OK,
       message,
-      data,
+      data: data || null,
     };
   }
 }
