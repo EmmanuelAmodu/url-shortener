@@ -17,25 +17,6 @@ services:
     networks:
       - url_shortner_network
 
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: postgres
-      POSTGRES_DB: url_shortner_db
-    ports:
-    - 5433:5432
-    volumes:
-    - ./db/initdb:/docker-entrypoint-initdb.d
-    - ./url-shortner-db-data:/var/lib/postgresql/data
-    networks:
-      - url_shortner_network
-
-volumes:
-  url-shortner-db-data:
-    driver: local
-
 networks:
   url_shortner_network:
     name: url_shortner_network
