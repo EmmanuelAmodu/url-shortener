@@ -6,17 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - db
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DATABASE_DB: url_shortner_db
-      DATABASE_PASSWORD: password
-      DB_USERNAME: postgres
-    networks:
-      - url_shortner_network
-
-networks:
-  url_shortner_network:
-    name: url_shortner_network
+      PORT: 3000
+      SECRET: U_%djXwuTKE=+NLM46C^A8PpPeCcuJ2Kt3Q2R52NqVU?gpg2pQCAkPfN5*MM2Yt*39fj4gSDVwwAS!2--krBV#-@RZqn=E8uQAcQ
