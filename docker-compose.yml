@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+  url-shortner:
+    image: url-shortner
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DATABASE_DB: url_shortner_db
+      DATABASE_PASSWORD: password
+      DB_USERNAME: postgres
+    networks:
+      - url_shortner_network
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: url_shortner_db
+    ports:
+    - 5433:5432
+    volumes:
+    - ./db/initdb:/docker-entrypoint-initdb.d
+    - ./url-shortner-db-data:/var/lib/postgresql/data
+    networks:
+      - url_shortner_network
+
+volumes:
+  url-shortner-db-data:
+    driver: local
+
+networks:
+  url_shortner_network:
+    name: url_shortner_network
