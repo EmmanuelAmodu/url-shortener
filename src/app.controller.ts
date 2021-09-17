@@ -6,8 +6,13 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Post('encode')
+  @Post('api/encode')
   async encode(@Body() data: URLDto) {
+    return this.appService.encode(data.url);
+  }
+
+  @Get('api/:code')
+  async getUrl(@Body() data: URLDto) {
     return this.appService.encode(data.url);
   }
 }
