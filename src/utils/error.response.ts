@@ -1,16 +1,18 @@
 import { HttpStatus } from '@nestjs/common';
 
+export type ErrorAPIRes = {
+  status: boolean;
+  statusCode: HttpStatus;
+  message: string;
+  error: string;
+  data: any;
+}
+
 export class ErrorResponse {
   notFoundResponse(
     message: string,
     error: string,
-  ): {
-    status: boolean;
-    statusCode: HttpStatus;
-    message: string;
-    error: string;
-    data: null;
-  } {
+  ): ErrorAPIRes {
     return {
       status: false,
       statusCode: HttpStatus.NOT_FOUND,
@@ -23,13 +25,7 @@ export class ErrorResponse {
   badRequestResponse(
     message: string,
     error: any,
-  ): {
-    status: boolean;
-    statusCode: HttpStatus;
-    message: string;
-    error: string;
-    data: null;
-  } {
+  ): ErrorAPIRes {
     return {
       status: false,
       statusCode: HttpStatus.BAD_REQUEST,
@@ -42,7 +38,7 @@ export class ErrorResponse {
   serverErrorResponse(
     message: string,
     error: any,
-  ): { status: boolean; statusCode: HttpStatus; message: string; error: any; data: null; } {
+  ): ErrorAPIRes {
     return {
       status: false,
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

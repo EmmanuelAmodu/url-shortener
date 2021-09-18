@@ -15,6 +15,8 @@ describe('AppController', () => {
     code: '13e1873acdf0fc47ac2fee5c398821844eb604478dd34a697e3b4731eaf3ab62'
   };
 
+  const code = urlDataResponse.code.substring(0, 6);
+
   let urlData: URLDto = { 
     url: 'example.domain.com'
   };
@@ -34,6 +36,20 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
+    it('should return all encoded url', () => {
+      appController.encode(urlData);
+      const res = appController.getAll();
+      expect(res[code]).toMatchObject(urlDataResponse);
+    });
+
+    it('should return all encoded url', () => {
+      appController.encode(urlData);
+      appController.goToUrl({ip: '127.0.0.1'}, code);
+
+      const res = appController.stats(code);
+      expect(res.data[0].code).toBe(code);
+    });
+
     it('should return call encode method in service with dto object', () => {
       jest.spyOn(appService, 'encode').mockImplementation(() => urlDataResponse);
       const res = appController.encode(urlData);
@@ -43,7 +59,6 @@ describe('AppController', () => {
 
     it('should return call decode method in service with dto object', () => {
       jest.spyOn(appService, 'decode').mockImplementation(() => urlDataResponse);
-      const code = urlDataResponse.code.substring(0, 6);
 
       const res = appController.decode(code);
       expect(appService.decode).toHaveBeenCalledWith(code);
@@ -64,6 +79,14 @@ describe('AppController', () => {
       expect(appService.decode).toHaveBeenCalledWith(urlData.url);
       expect(res.data).toBe(null);
       expect(res.statusCode).toBe(HttpStatus.NOT_FOUND);
+    });
+
+    it('should return a NOT_FOUND response is url does not exist', () => {
+      jest.spyOn(appService, 'setRequestLogRepository').mockImplementation(() => null);
+      jest.spyOn(appService, 'decode').mockImplementation(() => urlDataResponse);
+      const res = appController.goToUrl({ip: '127.0.0.1'}, code);
+      expect(appService.setRequestLogRepository).toHaveBeenCalled();
+      expect(appService.decode).toHaveBeenCalled();
     });
   });
 });

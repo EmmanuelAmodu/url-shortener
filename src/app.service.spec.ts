@@ -18,15 +18,29 @@ describe('UsersService', () => {
     service = module.get<AppService>(AppService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   it('should save and return an encoded object of the url', () => {
     expect(service.encode(urlData.url)).toMatchObject(urlData);
   });
 
   it('should return an encoded object of the url', () => {
-    expect(service.decode(urlData.code.substring(0, 6))).toMatchObject(urlData);
+    const result = service.encode(urlData.url);
+    expect(service.decode(urlData.code.substring(0, 6))).toMatchObject(result);
+  });
+
+  it('should save and return an encoded object of the url', () => {
+    const result = service.encode(urlData.url);
+    const key = urlData.code.substring(0, 6);
+
+    expect(service.urlRepository).toBeTruthy();
+    expect(service.urlRepository[key]).toMatchObject(result);
+  });
+
+  it('should save and return an encoded object of the url', () => {
+    const code = urlData.code.substring(0, 6);
+    service.setRequestLogRepository({ code, ip: '127.0.0.1', createdAt: Date.now()});
+
+    const result = service.getRequestLogRepository(urlData.code.substring(0, 6));
+    expect(result.length).toBe(1);
+    expect(result[0].code).toBe(code);
   });
 });
