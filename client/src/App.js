@@ -4,41 +4,63 @@ import axios from 'axios';
 import { Button, Container, Row, Form, Col } from 'react-bootstrap'
 
 class App extends Component {
+
   constructor(props) {
     super(props)
     this.state = {
       isLoading: false,
       urlList: [],
+      urlListToDisplay: []
     }
   }
 
   componentDidMount() {
-    this.getUrls()
+    this.getAllUrls()
   }
 
-  getUrls() {
+  serializeResponse(data) {
+    return Object.keys(data).map(key => ({
+      key, ...data
+    }));
+  }
+
+  getAllUrls() {
     axios.get('/api')
       .then((response) => {
-        const data = Object.keys(response.data).map(key => ({
-          key, ...response.data
-        }));
-
+        const data = this.serializeResponse(response.data);
         this.setState({
-          urlList: data
-        })
+          urlList: data,
+          urlListToDisplay: data
+        });
       })
   }
 
-  render() {
-    let card = this.state.urlList.map((val, key) => {
-      return (
-        <React.Fragment>
-          <Col xs={3}>2 of 3 (wider)</Col>
-        </React.Fragment>
-      )
-    });
+  search(str) {
+    if (str.length >= 3) {
+      const items = this.state.urlList.filter(e => e.key.contains(str));
+      this.setState({
+        urlListToDisplay: items
+      });
+    } else {
+      this.setState({
+        urlListToDisplay: this.state.urlList
+      });
+    }
+  }
 
-    let searchForm = (
+  saveUrl(url) {
+    axios.post('http://localhost/api/encode', {url}).then(response => {
+      const data = this.serializeResponse(response.data);
+      const list = [...this.state.urlList, data];
+      this.setState({
+        urlList: list,
+        urlListToDisplay: list
+      });
+    });
+  }
+
+  searchForm() {
+    return (
       <Form>
         <Row className="justify-content-md-center">
           <Col lg="6">
@@ -49,14 +71,17 @@ class App extends Component {
               className="mb-2"
               id="inlineFormInput"
               placeholder="Search Url code"
+              onChange={this.search}
             />
           </Col>
         </Row>
       </Form>
     )
+  }
 
-    let urlForm = (
-      <Form>
+  urlForm() {
+    return (
+      <Form onSubmit={this.saveUrl}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Long URL</Form.Label>
           <Form.Control type="domain" placeholder="Enter Long URL" />
@@ -66,14 +91,26 @@ class App extends Component {
         </Form.Group>
       </Form>
     )
+  }
+
+  render() {
+    let card = this.state.urlListToDisplay.map((val, key) => {
+      return (
+        <React.Fragment>
+          <Col xs={3}>
+
+          </Col>
+        </React.Fragment>
+      )
+    });
 
     return (
       <div className='App'>
         <Container>
-          {searchForm}
+          {this.searchForm()}
           <Row>
             <Col xs={3}>
-              {urlForm}
+              {this.urlForm()}
             </Col>
             {card}
           </Row>

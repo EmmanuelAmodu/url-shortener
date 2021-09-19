@@ -14,7 +14,16 @@ export class AppService {
   private _requestLogRepository: Log[] = []
 
   get urlRepository() {
-    return this._urlRepository;
+    const repos = {...this._urlRepository};
+    for (const key in repos) {
+      if (Object.prototype.hasOwnProperty.call(repos, key)) {
+        const el = repos[key];
+        el.key = key;
+        el.hits = this.getRequestLogRepository(key).length;
+      }
+    }
+
+    return repos;
   }
 
   setRequestLogRepository(log: Log) {

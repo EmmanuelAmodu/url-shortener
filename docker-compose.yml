@@ -1,11 +1,31 @@
 version: '3.1'
 
 services:
-  url-shortner:
-    image: url-shortner
+  url-shortner-backend:
+    image: url-shortner-backend
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+    - 3001:3001
     environment:
-      PORT: 3000
+      PORT: 3001
       SECRET: U_%djXwuTKE=+NLM46C^A8PpPeCcuJ2Kt3Q2R52NqVU?gpg2pQCAkPfN5*MM2Yt*39fj4gSDVwwAS!2--krBV#-@RZqn=E8uQAcQ
+    networks:
+      - url-shortner_network
+
+  url-shortner-frontend:
+    image: url-shortner-frontend
+    depends_on:
+      - url-shortner-backend
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+    - 3000:3000
+    networks:
+      - url-shortner_network
+
+networks:
+  url-shortner_network:
+    name: url-shortner_network
