@@ -9,6 +9,7 @@ class App extends Component {
     super(props)
     this.state = {
       isLoading: false,
+      newurl: '',
       urlList: [],
       urlListToDisplay: []
     }
@@ -25,7 +26,7 @@ class App extends Component {
   }
 
   getAllUrls() {
-    axios.get('/api')
+    axios.get('http://url-shortner-backend/api')
       .then((response) => {
         const data = this.serializeResponse(response.data);
         this.setState({
@@ -35,9 +36,11 @@ class App extends Component {
       })
   }
 
-  search(str) {
-    if (str.length >= 3) {
-      const items = this.state.urlList.filter(e => e.key.contains(str));
+  search(e) {
+    e.preventDefault();
+    let searchTerm = e.target.value;
+    if (searchTerm.length >= 3) {
+      const items = this.state.urlList.filter(e => e.key.contains(searchTerm));
       this.setState({
         urlListToDisplay: items
       });
@@ -48,8 +51,11 @@ class App extends Component {
     }
   }
 
-  saveUrl(url) {
-    axios.post('http://localhost/api/encode', {url}).then(response => {
+  saveUrl(e) {
+    e.preventDefault();
+    axios.post('http://url-shortner-backend/api/encode', {
+      url: this.state.newurl
+    }).then(response => {
       const data = this.serializeResponse(response.data);
       const list = [...this.state.urlList, data];
       this.setState({
@@ -57,6 +63,10 @@ class App extends Component {
         urlListToDisplay: list
       });
     });
+  }
+
+  setFormValue(event) {
+    this.setState({newurl: event.target.value});
   }
 
   searchForm() {
@@ -84,7 +94,11 @@ class App extends Component {
       <Form onSubmit={this.saveUrl}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Long URL</Form.Label>
-          <Form.Control type="domain" placeholder="Enter Long URL" />
+          <Form.Control
+            type="domain"
+            placeholder="Enter Long URL" 
+            onChange={this.setFormValue}
+          />
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
           <Button type="submit">Shorten</Button>
