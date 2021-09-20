@@ -5,7 +5,9 @@ describe('UsersService', () => {
   let service: AppService;
   let urlData = { 
     url: 'example.domain.com',
-    code: '13e1873acdf0fc47ac2fee5c398821844eb604478dd34a697e3b4731eaf3ab62'
+    code: '13e1873acdf0fc47ac2fee5c398821844eb604478dd34a697e3b4731eaf3ab62',
+    key: '13e187',
+    hits: 0
   };
 
   beforeEach(async () => {
@@ -24,23 +26,21 @@ describe('UsersService', () => {
 
   it('should return an encoded object of the url', () => {
     const result = service.encode(urlData.url);
-    expect(service.decode(urlData.code.substring(0, 6))).toMatchObject(result);
+    const decoded = service.decode(urlData.key);
+    console.log(decoded, result)
+    expect(decoded).toMatchObject(result);
   });
 
   it('should save and return an encoded object of the url', () => {
     const result = service.encode(urlData.url);
-    const key = urlData.code.substring(0, 6);
-
-    expect(service.urlRepository).toBeTruthy();
-    expect(service.urlRepository[key]).toMatchObject(result);
+    expect(service.urlRepository[urlData.key]).toMatchObject(result);
   });
 
   it('should save and return an encoded object of the url', () => {
-    const code = urlData.code.substring(0, 6);
-    service.setRequestLogRepository({ code, ip: '127.0.0.1', createdAt: Date.now()});
+    service.setRequestLogRepository({ code: urlData.key, ip: '127.0.0.1', createdAt: Date.now()});
 
-    const result = service.getRequestLogRepository(urlData.code.substring(0, 6));
+    const result = service.getRequestLogRepository(urlData.key);
     expect(result.length).toBe(1);
-    expect(result[0].code).toBe(code);
+    expect(result[0].code).toBe(urlData.key);
   });
 });

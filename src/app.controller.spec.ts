@@ -12,9 +12,10 @@ describe('AppController', () => {
 
   let urlDataResponse = { 
     url: 'example.domain.com',
-    code: '13e1873acdf0fc47ac2fee5c398821844eb604478dd34a697e3b4731eaf3ab62'
+    code: '13e1873acdf0fc47ac2fee5c398821844eb604478dd34a697e3b4731eaf3ab62',
+    key: '13e187',
+    hits: 0
   };
-
   const code = urlDataResponse.code.substring(0, 6);
 
   let urlData: URLDto = { 
