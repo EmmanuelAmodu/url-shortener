@@ -127,7 +127,6 @@ class App extends Component {
             </p>
             <p>Total Traffic: {val.hits}</p>
             </Card.Text>
-          <Button variant="primary">Details</Button>
         </Card.Body>
       </Card>
     )
