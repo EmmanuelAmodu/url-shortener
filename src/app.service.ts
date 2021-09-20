@@ -17,9 +17,8 @@ export class AppService {
     const repos = {...this._urlRepository};
     for (const key in repos) {
       if (Object.prototype.hasOwnProperty.call(repos, key)) {
-        const el = repos[key];
-        el.key = key;
-        el.hits = this.getRequestLogRepository(key).length;
+        repos[key].key = key;
+        repos[key].hits = this.getRequestLogRepository(key).length;
       }
     }
 
@@ -36,8 +35,9 @@ export class AppService {
 
   encode(url: string) {
     const code = createHmac('sha256', configuration.secret).update(url).digest('hex');
-    this._urlRepository[code.substring(0, 6)] = { url, code };
-    return this._urlRepository[code.substring(0, 6)];
+    const key = code.substring(0, 6);
+    this._urlRepository[key] = { url, code, key };
+    return { url, code, key, hits: 0 };
   }
 
   decode(id: string) {

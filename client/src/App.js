@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
-import { Button, Container, Row, Form, Col } from 'react-bootstrap'
+import { Button, Container, Row, Form, Col, Card } from 'react-bootstrap'
 
 class App extends Component {
 
@@ -21,12 +21,12 @@ class App extends Component {
 
   serializeResponse(data) {
     return Object.keys(data).map(key => ({
-      key, ...data
+      key, ...data[key]
     }));
   }
 
   getAllUrls() {
-    axios.get('http://url-shortner-backend/api')
+    axios.get('http://localhost:3001/api')
       .then((response) => {
         const data = this.serializeResponse(response.data);
         this.setState({
@@ -40,33 +40,33 @@ class App extends Component {
     e.preventDefault();
     let searchTerm = e.target.value;
     if (searchTerm.length >= 3) {
-      const items = this.state.urlList.filter(e => e.key.contains(searchTerm));
+      const items = this.state.urlList.filter(e => e.key.includes(searchTerm));
       this.setState({
-        urlListToDisplay: items
+        urlListToDisplay: items,
       });
     } else {
       this.setState({
-        urlListToDisplay: this.state.urlList
+        urlListToDisplay: this.state.urlList,
       });
     }
   }
 
   saveUrl(e) {
     e.preventDefault();
-    axios.post('http://url-shortner-backend/api/encode', {
+    axios.put('http://localhost:3001/api/encode', {
       url: this.state.newurl
     }).then(response => {
-      const data = this.serializeResponse(response.data);
-      const list = [...this.state.urlList, data];
+      const list = [...this.state.urlList, response.data.data];
       this.setState({
         urlList: list,
-        urlListToDisplay: list
+        urlListToDisplay: list,
+        newurl: ''
       });
     });
   }
 
   setFormValue(event) {
-    this.setState({newurl: event.target.value});
+    this.setState({ newurl: event.target.value });
   }
 
   searchForm() {
@@ -81,7 +81,7 @@ class App extends Component {
               className="mb-2"
               id="inlineFormInput"
               placeholder="Search Url code"
-              onChange={this.search}
+              onChange={this.search.bind(this)}
             />
           </Col>
         </Row>
@@ -91,13 +91,14 @@ class App extends Component {
 
   urlForm() {
     return (
-      <Form onSubmit={this.saveUrl}>
+      <Form onSubmit={this.saveUrl.bind(this)}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Long URL</Form.Label>
           <Form.Control
             type="domain"
-            placeholder="Enter Long URL" 
-            onChange={this.setFormValue}
+            placeholder="Enter Long URL"
+            onChange={this.setFormValue.bind(this)}
+            value={this.state.newurl}
           />
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -107,12 +108,37 @@ class App extends Component {
     )
   }
 
+  urlCard(val) {
+    return (
+      <Card style={{ 
+        width: '25rem',
+        height: '250px',
+        margin: '5px' 
+      }}>
+        <Card.Body>
+          <Card.Title>Code: {val.key}</Card.Title>
+          <Card.Text>
+            <p>Long URL: {val.url}</p>
+            <p>
+              Short URL:
+              <a href={'http://localhost:3001/' + val.key}>
+                http://localhost:3001/{val.key}
+              </a>
+            </p>
+            <p>Total Traffic: {val.hits}</p>
+            </Card.Text>
+          <Button variant="primary">Details</Button>
+        </Card.Body>
+      </Card>
+    )
+  }
+
   render() {
     let card = this.state.urlListToDisplay.map((val, key) => {
       return (
         <React.Fragment>
-          <Col xs={3}>
-
+          <Col>
+            {this.urlCard(val, key)}
           </Col>
         </React.Fragment>
       )
@@ -123,7 +149,7 @@ class App extends Component {
         <Container>
           {this.searchForm()}
           <Row>
-            <Col xs={3}>
+            <Col>
               {this.urlForm()}
             </Col>
             {card}
