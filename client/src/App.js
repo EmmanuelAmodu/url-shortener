@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
+import SearchForm from './SearchForm';
+import UrlForm from './UrlForm';
+import UrlCard from './UrlCard';
 import axios from 'axios';
-import { Button, Container, Row, Form, Col, Card } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 
 class App extends Component {
 
@@ -16,16 +19,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getAllUrls()
-  }
-
-  serializeResponse(data) {
-    return Object.keys(data).map(key => ({
-      key, ...data[key]
-    }));
-  }
-
-  getAllUrls() {
     axios.get('http://localhost:3001/api')
       .then((response) => {
         const data = this.serializeResponse(response.data);
@@ -34,6 +27,12 @@ class App extends Component {
           urlListToDisplay: data
         });
       })
+  }
+
+  serializeResponse(data) {
+    return Object.keys(data).map(key => ({
+      key, ...data[key]
+    }));
   }
 
   search(e) {
@@ -69,89 +68,26 @@ class App extends Component {
     this.setState({ newurl: event.target.value });
   }
 
-  searchForm() {
-    return (
-      <Form>
-        <Row className="justify-content-md-center">
-          <Col lg="6">
-            <Form.Label htmlFor="inlineFormInput" visuallyHidden>
-              Search
-            </Form.Label>
-            <Form.Control
-              className="mb-2"
-              id="inlineFormInput"
-              placeholder="Search Url code"
-              onChange={this.search.bind(this)}
-            />
-          </Col>
-        </Row>
-      </Form>
-    )
-  }
-
-  urlForm() {
-    return (
-      <Form onSubmit={this.saveUrl.bind(this)}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Long URL</Form.Label>
-          <Form.Control
-            type="domain"
-            placeholder="Enter Long URL"
-            onChange={this.setFormValue.bind(this)}
-            value={this.state.newurl}
-          />
-        </Form.Group>
-        <Form.Group as={Row} className="mb-3">
-          <Button type="submit">Shorten</Button>
-        </Form.Group>
-      </Form>
-    )
-  }
-
-  urlCard(val) {
-    return (
-      <Card style={{ 
-        width: '25rem',
-        height: '250px',
-        margin: '5px' 
-      }}>
-        <Card.Body>
-          <Card.Title>Code: {val.key}</Card.Title>
-          <Card.Text>
-            <p>Long URL: {val.url}</p>
-            <p>
-              Short URL:
-              <a href={'http://localhost:3001/' + val.key}>
-                http://localhost:3001/{val.key}
-              </a>
-            </p>
-            <p>Total Traffic: {val.hits}</p>
-            </Card.Text>
-        </Card.Body>
-      </Card>
-    )
-  }
-
   render() {
-    let card = this.state.urlListToDisplay.map((val, key) => {
-      return (
-        <React.Fragment>
-          <Col>
-            {this.urlCard(val, key)}
-          </Col>
-        </React.Fragment>
-      )
-    });
-
     return (
-      <div className='App'>
+      <div className='App' style={{
+        marginTop: '50px'
+      }}>
         <Container>
-          {this.searchForm()}
+          <SearchForm handleChange={this.search.bind(this)} />
           <Row>
             <Col>
-              {this.urlForm()}
+              <UrlForm
+                newurl={this.state.newurl}
+                handleSubmit={this.saveUrl.bind(this)}
+                handleChange={this.setFormValue.bind(this)}
+              />
             </Col>
-            {card}
+            {this.state.urlListToDisplay.map((val, key) => (
+              <Col key={key}>
+                <UrlCard data={val} />
+              </Col>
+            ))}
           </Row>
         </Container>
       </div>
