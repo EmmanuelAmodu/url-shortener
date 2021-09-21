@@ -17,6 +17,8 @@
 # Run the Applicatin with Docker Compose
 
 1. Ensure [docker](https://docs.docker.com/desktop/mac/install/) is installed.
-1. The application uses port 3000 for the frontend and 3001 for the backend, make sure this two port is not in use.
+1. The application uses port **3000** for the frontend and **3001** for the backend, make sure this two port is not in use.
 1. Run `docker-compose build`
 1. When the build is complete run `docker-compose up`
+
+*To See Swagger Documentation please go to `https://localhost:3001/doc`*

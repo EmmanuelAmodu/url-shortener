@@ -12,7 +12,7 @@ export default function SearchForm({ handleChange }) {
           <Form.Control
             className="mb-2"
             id="inlineFormInput"
-            placeholder="Search Url code"
+            placeholder="Search by long url or code"
             onChange={handleChange}
           />
         </Col>

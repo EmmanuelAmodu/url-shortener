@@ -27,7 +27,6 @@ describe('UsersService', () => {
   it('should return an encoded object of the url', () => {
     const result = service.encode(urlData.url);
     const decoded = service.decode(urlData.key);
-    console.log(decoded, result)
     expect(decoded).toMatchObject(result);
   });
 

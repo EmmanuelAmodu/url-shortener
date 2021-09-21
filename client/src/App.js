@@ -39,9 +39,10 @@ class App extends Component {
     e.preventDefault();
     let searchTerm = e.target.value;
     if (searchTerm.length >= 3) {
-      const items = this.state.urlList.filter(e => e.key.includes(searchTerm));
       this.setState({
-        urlListToDisplay: items,
+        urlListToDisplay: this.state.urlList.filter(e => {
+          return e.url.includes(searchTerm) || e.url.includes(searchTerm);
+        }),
       });
     } else {
       this.setState({
