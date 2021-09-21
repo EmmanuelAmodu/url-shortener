@@ -4,7 +4,7 @@ import SearchForm from './SearchForm';
 import UrlForm from './UrlForm';
 import UrlCard from './UrlCard';
 import axios from 'axios';
-import { Container, Row, Col, Card } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 
 class App extends Component {
 
@@ -20,13 +20,13 @@ class App extends Component {
 
   componentDidMount() {
     axios.get('http://localhost:3001/api')
-    .then((response) => {
-      const data = this.serializeResponse(response.data);
-      this.setState({
-        urlList: data,
-        urlListToDisplay: data
-      });
-    })
+      .then((response) => {
+        const data = this.serializeResponse(response.data);
+        this.setState({
+          urlList: data,
+          urlListToDisplay: data
+        });
+      })
   }
 
   serializeResponse(data) {
@@ -69,27 +69,25 @@ class App extends Component {
   }
 
   render() {
-    let card = this.state.urlListToDisplay.map((val, key) => {
-      return (
-        <Col key={key}>
-          <UrlCard data={val}/>
-        </Col>
-      )
-    });
-
     return (
-      <div className='App'>
+      <div className='App' style={{
+        marginTop: '50px'
+      }}>
         <Container>
-          <SearchForm handleChange={this.search.bind(this)}/>
+          <SearchForm handleChange={this.search.bind(this)} />
           <Row>
             <Col>
-              <UrlForm 
+              <UrlForm
                 newurl={this.state.newurl}
                 handleSubmit={this.saveUrl.bind(this)}
                 handleChange={this.setFormValue.bind(this)}
               />
             </Col>
-            {card}
+            {this.state.urlListToDisplay.map((val, key) => (
+              <Col key={key}>
+                <UrlCard data={val} />
+              </Col>
+            ))}
           </Row>
         </Container>
       </div>
