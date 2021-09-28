@@ -1,4 +1,4 @@
-# Run the Applicatin Manually
+# Run the Application Manually
 
 ## Setup Backend Service
 1. Ensure [nodejs](https://nodejs.org/en/download/) is installed.
